@@ -2,115 +2,49 @@ import * as vscode from "vscode";
 import * as path from "path";
 
 export class FrequentlyUsedFilesProvider
-  implements vscode.TreeDataProvider<Dependency>
+  implements vscode.TreeDataProvider<BranchOrFile>
 {
+  private info: BranchOrFile[] = [
+    new BranchOrFile("Group A", [
+      new BranchOrFile("groupA - file 1", []),
+      new BranchOrFile("groupA - file 2", []),
+    ]),
+    new BranchOrFile("Group B", [
+      new BranchOrFile("groupB - file 1", []),
+      new BranchOrFile("groupB - file 2", []),
+      new BranchOrFile("groupB - file 3", []),
+    ]),
+    new BranchOrFile("Group C", []),
+  ];
+
   constructor() {}
 
-  getTreeItem(element: Dependency): vscode.TreeItem {
+  getTreeItem(element: BranchOrFile): vscode.TreeItem {
     return element;
   }
 
-  getChildren(element?: Dependency): Thenable<Dependency[]> {
-    vscode.window.showInformationMessage("No dependency in empty workspace");
-    return Promise.resolve([new Dependency("foo"), new Dependency("bar")]);
-    // }
+  getChildren(element?: BranchOrFile): Thenable<BranchOrFile[]> {
+    if (element) {
+      return Promise.resolve(element.files);
+    }
 
-    // if (element) {
-    // 	return Promise.resolve(
-    // 		this.getDepsInPackageJson(
-    // 			path.join(this.workspaceRoot, 'node_modules', element.label, 'package.json')
-    // 		)
-    // 	);
-    // } else {
-    // 	const packageJsonPath = path.join(this.workspaceRoot, 'package.json');
-    // 	if (this.pathExists(packageJsonPath)) {
-    // 		return Promise.resolve(this.getDepsInPackageJson(packageJsonPath));
-    // 	} else {
-    // 		vscode.window.showInformationMessage('Workspace has no package.json');
-    // 		return Promise.resolve([]);
-    // 	}
-    // }
+    return Promise.resolve(this.info);
   }
-
-  // 	/**
-  // 	 * Given the path to package.json, read all its dependencies and devDependencies.
-  // 	 */
-  // 	private getDepsInPackageJson(packageJsonPath: string): Dependency[] {
-  // 		if (this.pathExists(packageJsonPath)) {
-  // 			const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-
-  // 			const toDep = (moduleName: string, version: string): Dependency => {
-  // 				if (this.pathExists(path.join(this.workspaceRoot, 'node_modules', moduleName))) {
-  // 					return new Dependency(
-  // 						moduleName,
-  // 						version,
-  // 						vscode.TreeItemCollapsibleState.Collapsed
-  // 					);
-  // 				} else {
-  // 					return new Dependency(moduleName, version, vscode.TreeItemCollapsibleState.None, {
-  // 						command: 'extension.openPackageOnNpm',
-  // 						title: '',
-  // 						arguments: [moduleName],
-  // 					});
-  // 				}
-  // 			};
-
-  // 			/*eslint no-mixed-spaces-and-tabs: 0*/
-  // 			const deps = packageJson.dependencies
-  // 				? Object.keys(packageJson.dependencies).map((dep) =>
-  // 						toDep(dep, packageJson.dependencies[dep])
-  // 				  )
-  // 				: [];
-  // 			const devDeps = packageJson.devDependencies
-  // 				? Object.keys(packageJson.devDependencies).map((dep) =>
-  // 						toDep(dep, packageJson.devDependencies[dep])
-  // 				  )
-  // 				: [];
-  // 			return deps.concat(devDeps);
-  // 		} else {
-  // 			return [];
-  // 		}
-  // 	}
-
-  // 	private pathExists(p: string): boolean {
-  // 		try {
-  // 			fs.accessSync(p);
-  // 		} catch (err) {
-  // 			return false;
-  // 		}
-
-  // 		return true;
-  // 	}
 }
 
-export class Dependency extends vscode.TreeItem {
+export class BranchOrFile extends vscode.TreeItem {
   constructor(
-    public readonly label: string // private readonly version: string, // public readonly collapsibleState: vscode.TreeItemCollapsibleState, // public readonly command?: vscode.Command
+    public readonly label: string,
+    public readonly files: BranchOrFile[]
   ) {
-    super(label, vscode.TreeItemCollapsibleState.None);
+    super(label);
 
     this.tooltip = `${this.label}`;
-    this.description = `${this.label} - Description`;
+    // this.description = `${this.label} - Description`;
+    this.collapsibleState =
+      files.length > 0
+        ? vscode.TreeItemCollapsibleState.Collapsed
+        : vscode.TreeItemCollapsibleState.None;
   }
-
-  // iconPath = {
-  //   light: path.join(
-  //     "JoeJoe" + __filename,
-  //     "..",
-  //     "..",
-  //     "resources",
-  //     "light",
-  //     "dependency.svg"
-  //   ),
-  //   dark: path.join(
-  //     "JoeJoe" + __filename,
-  //     "..",
-  //     "..",
-  //     "resources",
-  //     "dark",
-  //     "dependency.svg"
-  //   ),
-  // };
-
-  contextValue = "dependency";
+  contextValue = "joejoe";
 }
