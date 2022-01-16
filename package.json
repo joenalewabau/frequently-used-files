@@ -1,5 +1,5 @@
 {
-  "name": "frequently-used-files",
+	"name": "frequently-used-files",
 	"displayName": "frequently-used-files",
 	"description": "",
 	"version": "0.0.1",
@@ -10,16 +10,29 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:frequently-used-files.helloWorld"
+		"onView:frequentlyUsedFiles"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
-		"commands": [
-			{
-				"command": "frequently-used-files.helloWorld",
-				"title": "Hello World"
-			}
-		]
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "frequentlyUsedFiles-explorer",
+					"title": "Frequent Files AB",
+					"icon": "media/dep.svg"
+				}
+			]
+		},
+		"views": {
+			"frequentlyUsedFiles-explorer": [
+				{
+					"id": "frequentlyUsedFiles",
+					"name": "Frequently Files PE",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Frequent Files PE"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
