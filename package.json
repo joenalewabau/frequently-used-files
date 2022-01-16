@@ -14,11 +14,37 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"commands": [
+			{
+				"command": "frequentlyUsedFiles.refresh",
+				"title": "Refresh",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "frequentlyUsedFiles.refreshABranch",
+				"title": "Refresh a branch",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "frequentlyUsedFiles.addAFile",
+				"title": "Add a file",
+				"icon": {
+					"light": "resources/light/boolean.svg",
+					"dark": "resources/dark/boolean.svg"
+				}
+			}
+		],
 		"viewsContainers": {
 			"activitybar": [
 				{
 					"id": "frequentlyUsedFiles-explorer",
-					"title": "Frequent Files AB",
+					"title": "Frequent Files",
 					"icon": "media/dep.svg"
 				}
 			]
@@ -27,9 +53,34 @@
 			"frequentlyUsedFiles-explorer": [
 				{
 					"id": "frequentlyUsedFiles",
-					"name": "Frequently Files PE",
+					"name": "Saved file groups",
 					"icon": "media/dep.svg",
 					"contextualTitle": "Frequent Files PE"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "frequentlyUsedFiles.refresh",
+					"when": "view == frequentlyUsedFiles"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "frequentlyUsedFiles.refreshABranch",
+					"when": "view == frequentlyUsedFiles && viewItem == branch",
+					"group": "inline"
+				},
+				{
+					"command": "frequentlyUsedFiles.addAFile",
+					"when": "view == frequentlyUsedFiles && viewItem == file",
+					"group": "inline"
+				},
+				{
+					"command": "frequentlyUsedFiles.addAFile",
+					"when": "view == frequentlyUsedFiles && viewItem == file",
+					"group": "inline"
 				}
 			]
 		}

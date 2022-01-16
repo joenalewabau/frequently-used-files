@@ -41,10 +41,13 @@ export class BranchOrFile extends vscode.TreeItem {
 
     this.tooltip = `${this.label}`;
     // this.description = `${this.label} - Description`;
-    this.collapsibleState =
-      files.length > 0
-        ? vscode.TreeItemCollapsibleState.Collapsed
-        : vscode.TreeItemCollapsibleState.None;
+
+    if (files.length > 0) {
+      this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+      this.contextValue = "branch";
+    } else {
+      this.collapsibleState = vscode.TreeItemCollapsibleState.None;
+      this.contextValue = "file";
+    }
   }
-  contextValue = "joejoe";
 }
