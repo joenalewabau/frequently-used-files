@@ -1,34 +1,29 @@
 import * as vscode from "vscode";
-import * as path from "path";
+import { loadConfigFile } from "./utils/loadConfigFile";
 
 export class FrequentlyUsedFilesProvider
   implements vscode.TreeDataProvider<BranchOrFile>
 {
-  private info: BranchOrFile[] = [
-    new BranchOrFile("Group A", [
-      new BranchOrFile("groupA - file 1", []),
-      new BranchOrFile("groupA - file 2", []),
-    ]),
-    new BranchOrFile("Group B", [
-      new BranchOrFile("groupB - file 1", []),
-      new BranchOrFile("groupB - file 2", []),
-      new BranchOrFile("groupB - file 3", []),
-    ]),
-    new BranchOrFile("Group C", []),
-  ];
-
-  constructor() {}
+  constructor(public readonly configFile: string) {}
 
   getTreeItem(element: BranchOrFile): vscode.TreeItem {
     return element;
   }
 
-  getChildren(element?: BranchOrFile): Thenable<BranchOrFile[]> {
+  async getChildren(element?: BranchOrFile): Promise<BranchOrFile[]> {
     if (element) {
       return Promise.resolve(element.files);
     }
 
-    return Promise.resolve(this.info);
+    // Attempt to load the config file
+    const loadFilesFromConfig = await loadConfigFile(this.configFile);
+
+    if (loadFilesFromConfig.isErr()) {
+      vscode.window.showInformationMessage(loadFilesFromConfig.error);
+      return Promise.resolve([]);
+    }
+
+    return Promise.resolve(loadFilesFromConfig.value);
   }
 }
 
@@ -43,7 +38,7 @@ export class BranchOrFile extends vscode.TreeItem {
     // this.description = `${this.label} - Description`;
 
     if (files.length > 0) {
-      this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+      this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
       this.contextValue = "branch";
     } else {
       this.collapsibleState = vscode.TreeItemCollapsibleState.None;

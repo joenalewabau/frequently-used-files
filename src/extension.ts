@@ -1,10 +1,16 @@
-import { getVSCodeDownloadUrl } from "@vscode/test-electron/out/util";
+// spell-checker:ignore fufconfig
+
 import * as vscode from "vscode";
-import { FrequentlyUsedFilesProvider } from "./frequentlyUsedFilesProvider";
+import {
+  BranchOrFile,
+  FrequentlyUsedFilesProvider,
+} from "./frequentlyUsedFilesProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   // Samples of `window.registerTreeDataProvider`
-  const frequentlyUsedFilesProvider = new FrequentlyUsedFilesProvider();
+  const frequentlyUsedFilesProvider = new FrequentlyUsedFilesProvider(
+    "fufconfig.json"
+  );
   vscode.window.registerTreeDataProvider(
     "frequentlyUsedFiles",
     frequentlyUsedFilesProvider
@@ -14,22 +20,32 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.showInformationMessage(`Refresh frequentlyUsedFiles.`)
   );
 
-  vscode.commands.registerCommand("frequentlyUsedFiles.refreshABranch", () => {
-    console.log(`Workspace name ${vscode.workspace.name}`);
-    console.log(`Workspace folders `, vscode.workspace.workspaceFolders);
+  vscode.commands.registerCommand(
+    "frequentlyUsedFiles.refreshABranch",
+    async (branchPressed: BranchOrFile) => {
+      const folders = vscode.workspace.workspaceFolders;
+      if (folders) {
+        // Open up all the files in this group
+        for (const file of branchPressed.files) {
+          const uri = vscode.Uri.joinPath(folders[0].uri, file.label);
+          const doc = await vscode.workspace.openTextDocument(uri);
+          vscode.window.showTextDocument(doc);
+        }
+      }
+    }
+  );
 
-    vscode.workspace.workspaceFolders?.forEach((folder) =>
-      console.log({ folder })
-    );
-    const currentDocs = vscode.workspace.textDocuments;
+  vscode.commands.registerCommand(
+    "frequentlyUsedFiles.openFile",
+    async (filePressed: BranchOrFile) => {
+      const folders = vscode.workspace.workspaceFolders;
+      if (folders) {
+        const uri = vscode.Uri.joinPath(folders[0].uri, filePressed.label);
 
-    currentDocs.forEach((doc) => {
-      console.log(`Doc fsPath is ${doc.uri.fsPath}`);
-    });
-  });
-
-  vscode.commands.registerCommand("frequentlyUsedFiles.addAFile", () =>
-    vscode.window.showInformationMessage(`Add a file.`)
+        const doc = await vscode.workspace.openTextDocument(uri);
+        vscode.window.showTextDocument(doc);
+      }
+    }
   );
 }
 
