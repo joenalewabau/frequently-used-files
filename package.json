@@ -6,6 +6,9 @@
 	"engines": {
 		"vscode": "^1.63.0"
 	},
+	"repository": {
+		"url": "https://github.com/jnalewabau/frequently-used-files.git"
+	},
 	"categories": [
 		"Other"
 	],
@@ -24,19 +27,19 @@
 				}
 			},
 			{
-				"command": "frequentlyUsedFiles.refreshABranch",
-				"title": "Refresh a branch",
+				"command": "frequentlyUsedFiles.openGroup",
+				"title": "Opens all files in a group",
 				"icon": {
-					"light": "resources/light/refresh.svg",
-					"dark": "resources/dark/refresh.svg"
+					"light": "resources/light/edit.svg",
+					"dark": "resources/dark/edit.svg"
 				}
 			},
 			{
 				"command": "frequentlyUsedFiles.openFile",
 				"title": "Open a file",
 				"icon": {
-					"light": "resources/light/document.svg",
-					"dark": "resources/dark/document.svg"
+					"light": "resources/light/edit.svg",
+					"dark": "resources/dark/edit.svg"
 				}
 			}
 		],
@@ -68,7 +71,7 @@
 			],
 			"view/item/context": [
 				{
-					"command": "frequentlyUsedFiles.refreshABranch",
+					"command": "frequentlyUsedFiles.openGroup",
 					"when": "view == frequentlyUsedFiles && viewItem == branch",
 					"group": "inline"
 				},

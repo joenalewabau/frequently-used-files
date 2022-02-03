@@ -16,12 +16,13 @@ export function activate(context: vscode.ExtensionContext) {
     frequentlyUsedFilesProvider
   );
 
-  vscode.commands.registerCommand("frequentlyUsedFiles.refresh", () =>
-    vscode.window.showInformationMessage(`Refresh frequentlyUsedFiles.`)
-  );
+  vscode.commands.registerCommand("frequentlyUsedFiles.refresh", () => {
+    frequentlyUsedFilesProvider.refresh();
+    vscode.window.showInformationMessage(`Refreshed frequentlyUsedFiles`);
+  });
 
   vscode.commands.registerCommand(
-    "frequentlyUsedFiles.refreshABranch",
+    "frequentlyUsedFiles.openGroup",
     async (branchPressed: BranchOrFile) => {
       const folders = vscode.workspace.workspaceFolders;
       if (folders) {

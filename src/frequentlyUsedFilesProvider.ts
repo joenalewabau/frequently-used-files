@@ -25,6 +25,18 @@ export class FrequentlyUsedFilesProvider
 
     return Promise.resolve(loadFilesFromConfig.value);
   }
+
+  // Refresh implementation
+  private _onDidChangeTreeData: vscode.EventEmitter<
+    BranchOrFile | undefined | null | void
+  > = new vscode.EventEmitter<BranchOrFile | undefined | null | void>();
+  readonly onDidChangeTreeData: vscode.Event<
+    BranchOrFile | undefined | null | void
+  > = this._onDidChangeTreeData.event;
+
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
 }
 
 export class BranchOrFile extends vscode.TreeItem {
