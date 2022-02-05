@@ -56,17 +56,29 @@
 			"frequentlyUsedFiles-explorer": [
 				{
 					"id": "frequentlyUsedFiles",
-					"name": "Saved file groups",
+					"name": "File groups",
 					"icon": "media/dep.svg",
 					"contextualTitle": "Frequent Files PE"
 				}
 			]
 		},
+		"viewsWelcome": [
+			{
+				"view": "frequentlyUsedFiles",
+				"when": "frequentlyUsedFiles.configFormatError == false",
+				"contents": "Frequent files requires a configuration file (`fufconfig.json`) to exist at the root level of the project.\n[Create sample config file](command:frequentlyUsedFiles.createDefaultConfig)"
+			},
+			{
+				"view": "frequentlyUsedFiles",
+				"when": "frequentlyUsedFiles.configFormatError == true",
+				"contents": "Frequent files configuration file (`fufconfig.json`) has a format issue. Please fix and refresh\n[Refresh](command:frequentlyUsedFiles.refresh)"
+			}
+		],
 		"menus": {
 			"view/title": [
 				{
 					"command": "frequentlyUsedFiles.refresh",
-					"when": "view == frequentlyUsedFiles"
+					"group": "navigation"
 				}
 			],
 			"view/item/context": [

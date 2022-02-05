@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import * as vscode from "vscode";
 import * as Joi from "joi";
-import { BranchOrFile } from "../frequentlyUsedFilesProvider";
+import { GroupOrFile } from "../frequentlyUsedFilesProvider";
 import { groupCollapsed } from "console";
 
 const groupSchema = Joi.object({
@@ -23,17 +23,23 @@ export interface FUFSettingsRaw {
 }
 
 export interface FUFGroup {
-  name: BranchOrFile;
-  files: BranchOrFile[];
+  name: GroupOrFile;
+  files: GroupOrFile[];
 }
 
 export async function loadConfigFile(
   configFile: string
-): Promise<Result<BranchOrFile[], string>> {
+): Promise<Result<GroupOrFile[], string>> {
   try {
     const folders = vscode.workspace.workspaceFolders;
 
     if (folders) {
+      vscode.commands.executeCommand(
+        "setContext",
+        "frequentlyUsedFiles.configFormatError",
+        false
+      );
+
       const uri = vscode.Uri.joinPath(folders[0].uri, configFile);
 
       const doc = await vscode.workspace.openTextDocument(uri);
@@ -48,6 +54,11 @@ export async function loadConfigFile(
       if (error) {
         const msg = `FUF Config format issue: ${error.message}`;
         vscode.window.showErrorMessage(msg);
+        vscode.commands.executeCommand(
+          "setContext",
+          "frequentlyUsedFiles.configFormatError",
+          true
+        );
 
         return err(msg);
       }
@@ -55,14 +66,14 @@ export async function loadConfigFile(
       // We have a valid config file - turn it into an object we understand
       const config: FUFSettingsRaw = value as FUFSettingsRaw;
 
-      const groups: BranchOrFile[] = [];
+      const groups: GroupOrFile[] = [];
 
       for (const group of config.groups) {
         const groupFiles = group.files.map((fileName) => {
-          return new BranchOrFile(fileName, []);
+          return new GroupOrFile(fileName, []);
         });
 
-        const processedGroup = new BranchOrFile(group.name, groupFiles);
+        const processedGroup = new GroupOrFile(group.name, groupFiles);
 
         groups.push(processedGroup);
       }
@@ -76,7 +87,8 @@ export async function loadConfigFile(
     const msg = `FUF: config file ${configFile} is not present - ${JSON.stringify(
       error
     )}`;
-    vscode.window.showErrorMessage(msg);
+    // No need to show the message
+    // vscode.window.showErrorMessage(msg);
     return err(msg);
   }
 }

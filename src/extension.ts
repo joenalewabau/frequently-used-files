@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import {
-  BranchOrFile,
+  GroupOrFile,
   FrequentlyUsedFilesProvider,
 } from "./frequentlyUsedFilesProvider";
 
@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.commands.registerCommand(
     "frequentlyUsedFiles.openGroup",
-    async (branchPressed: BranchOrFile) => {
+    async (branchPressed: GroupOrFile) => {
       const folders = vscode.workspace.workspaceFolders;
       if (folders) {
         // Open up all the files in this group
@@ -38,7 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.commands.registerCommand(
     "frequentlyUsedFiles.openFile",
-    async (filePressed: BranchOrFile) => {
+    async (filePressed: GroupOrFile) => {
       const folders = vscode.workspace.workspaceFolders;
       if (folders) {
         const uri = vscode.Uri.joinPath(folders[0].uri, filePressed.label);

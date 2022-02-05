@@ -2,15 +2,15 @@ import * as vscode from "vscode";
 import { loadConfigFile } from "./utils/loadConfigFile";
 
 export class FrequentlyUsedFilesProvider
-  implements vscode.TreeDataProvider<BranchOrFile>
+  implements vscode.TreeDataProvider<GroupOrFile>
 {
   constructor(public readonly configFile: string) {}
 
-  getTreeItem(element: BranchOrFile): vscode.TreeItem {
+  getTreeItem(element: GroupOrFile): vscode.TreeItem {
     return element;
   }
 
-  async getChildren(element?: BranchOrFile): Promise<BranchOrFile[]> {
+  async getChildren(element?: GroupOrFile): Promise<GroupOrFile[]> {
     if (element) {
       return Promise.resolve(element.files);
     }
@@ -19,7 +19,13 @@ export class FrequentlyUsedFilesProvider
     const loadFilesFromConfig = await loadConfigFile(this.configFile);
 
     if (loadFilesFromConfig.isErr()) {
-      vscode.window.showInformationMessage(loadFilesFromConfig.error);
+      const errorMessage = loadFilesFromConfig.error;
+      // Only show error message if error is not the file being found.
+      // If config file is not found then the welcome view will be displayed
+      if (errorMessage.indexOf("is not present") === -1) {
+        // No need to show a message as
+        vscode.window.showInformationMessage(loadFilesFromConfig.error);
+      }
       return Promise.resolve([]);
     }
 
@@ -28,10 +34,10 @@ export class FrequentlyUsedFilesProvider
 
   // Refresh implementation
   private _onDidChangeTreeData: vscode.EventEmitter<
-    BranchOrFile | undefined | null | void
-  > = new vscode.EventEmitter<BranchOrFile | undefined | null | void>();
+    GroupOrFile | undefined | null | void
+  > = new vscode.EventEmitter<GroupOrFile | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<
-    BranchOrFile | undefined | null | void
+    GroupOrFile | undefined | null | void
   > = this._onDidChangeTreeData.event;
 
   refresh(): void {
@@ -39,10 +45,10 @@ export class FrequentlyUsedFilesProvider
   }
 }
 
-export class BranchOrFile extends vscode.TreeItem {
+export class GroupOrFile extends vscode.TreeItem {
   constructor(
     public readonly label: string,
-    public readonly files: BranchOrFile[]
+    public readonly files: GroupOrFile[]
   ) {
     super(label);
 
