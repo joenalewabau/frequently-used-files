@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "Main files",
+      "files": [
+        "src\\extension.ts",
+        "package.json"
+      ]
+    }
+  ]
+}
