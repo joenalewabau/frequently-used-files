@@ -57,7 +57,7 @@ export class GroupOrFile extends vscode.TreeItem {
 
     if (files.length > 0) {
       this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-      this.contextValue = "branch";
+      this.contextValue = "group";
     } else {
       this.collapsibleState = vscode.TreeItemCollapsibleState.None;
       this.contextValue = "file";

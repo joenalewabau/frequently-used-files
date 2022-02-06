@@ -46,14 +46,14 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "frequentlyUsedFiles-explorer",
+					"id": "frequentlyUsedFiles",
 					"title": "Frequent Files",
 					"icon": "media/dep.svg"
 				}
 			]
 		},
 		"views": {
-			"frequentlyUsedFiles-explorer": [
+			"frequentlyUsedFiles": [
 				{
 					"id": "frequentlyUsedFiles",
 					"name": "File groups",
@@ -84,7 +84,7 @@
 			"view/item/context": [
 				{
 					"command": "frequentlyUsedFiles.openGroup",
-					"when": "view == frequentlyUsedFiles && viewItem == branch",
+					"when": "view == frequentlyUsedFiles && viewItem == group",
 					"group": "inline"
 				},
 				{
