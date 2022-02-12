@@ -2,7 +2,6 @@ import { err, ok, Result } from "neverthrow";
 import * as vscode from "vscode";
 import * as Joi from "joi";
 import { GroupOrFile } from "../frequentlyUsedFilesProvider";
-import { groupCollapsed } from "console";
 
 const groupSchema = Joi.object({
   name: Joi.string().required(),
@@ -27,9 +26,14 @@ export interface FUFGroup {
   files: GroupOrFile[];
 }
 
+export interface LoadConfigFailure {
+  code: "config-not-found" | "config-format-error" | "code-no-workspace";
+  message: string;
+}
+
 export async function loadConfigFile(
   configFile: string
-): Promise<Result<GroupOrFile[], string>> {
+): Promise<Result<GroupOrFile[], LoadConfigFailure>> {
   try {
     const folders = vscode.workspace.workspaceFolders;
 
@@ -52,15 +56,18 @@ export async function loadConfigFile(
       const { value, error } = groupSettingsSchema.validate(jsonContents);
 
       if (error) {
-        const msg = `FUF Config format issue: ${error.message}`;
-        vscode.window.showErrorMessage(msg);
+        const message = `FUF Config format issue: ${error.message}`;
+        vscode.window.showErrorMessage(message);
         vscode.commands.executeCommand(
           "setContext",
           "frequentlyUsedFiles.configFormatError",
           true
         );
 
-        return err(msg);
+        return err({
+          code: "config-format-error",
+          message,
+        });
       }
 
       // We have a valid config file - turn it into an object we understand
@@ -80,15 +87,22 @@ export async function loadConfigFile(
 
       return ok(groups);
     }
-    const msg = `FUF: no VSCode workspace folders `;
-    vscode.window.showErrorMessage(msg);
-    return err(msg);
+    const message = `FUF: no VSCode workspace folders `;
+    vscode.window.showErrorMessage(message);
+
+    return err({
+      code: "code-no-workspace",
+      message,
+    });
   } catch (error) {
-    const msg = `FUF: config file ${configFile} is not present - ${JSON.stringify(
+    const message = `FUF: config file ${configFile} is not present - ${JSON.stringify(
       error
     )}`;
     // No need to show the message
     // vscode.window.showErrorMessage(msg);
-    return err(msg);
+    return err({
+      code: "config-not-found",
+      message,
+    });
   }
 }

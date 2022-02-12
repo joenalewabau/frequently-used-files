@@ -1,4 +1,4 @@
-export const DEFAULT_CONFIG_FILE_NAME = "fufconfig.json";
+export const DEFAULT_CONFIG_FILE_NAME = 'fufconfig.json';
 export const DEFAULT_CONFIG_FILE_CONTENTS = `{
   "groups": [
     {
