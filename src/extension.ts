@@ -46,8 +46,19 @@ export function activate(context: vscode.ExtensionContext) {
       if (folders) {
         const uri = vscode.Uri.joinPath(folders[0].uri, filePressed.label);
 
-        const doc = await vscode.workspace.openTextDocument(uri);
-        vscode.window.showTextDocument(doc);
+        await vscode.commands.executeCommand("vscode.open", uri);
+      }
+    }
+  );
+
+  vscode.commands.registerCommand(
+    "frequentlyUsedFiles.openFileViaClick",
+    async (filePath) => {
+      const folders = vscode.workspace.workspaceFolders;
+      if (folders) {
+        const uri = vscode.Uri.joinPath(folders[0].uri, filePath);
+
+        await vscode.commands.executeCommand("vscode.open", uri);
       }
     }
   );

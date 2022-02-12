@@ -41,6 +41,14 @@
 					"light": "resources/light/edit.svg",
 					"dark": "resources/dark/edit.svg"
 				}
+			},
+			{
+				"command": "frequentlyUsedFiles.openFileViaClick",
+				"title": "Open a file",
+				"icon": {
+					"light": "resources/light/edit.svg",
+					"dark": "resources/dark/edit.svg"
+				}
 			}
 		],
 		"viewsContainers": {

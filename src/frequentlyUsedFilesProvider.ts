@@ -53,7 +53,6 @@ export class GroupOrFile extends vscode.TreeItem {
     super(label);
 
     this.tooltip = `${this.label}`;
-    // this.description = `${this.label} - Description`;
 
     if (files.length > 0) {
       this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
@@ -61,6 +60,11 @@ export class GroupOrFile extends vscode.TreeItem {
     } else {
       this.collapsibleState = vscode.TreeItemCollapsibleState.None;
       this.contextValue = "file";
+      this.command = {
+        command: "frequentlyUsedFiles.openFileViaClick",
+        title: "Open",
+        arguments: [label],
+      };
     }
   }
 }
