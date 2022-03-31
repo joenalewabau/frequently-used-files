@@ -27,6 +27,14 @@
 				}
 			},
 			{
+				"command": "frequentlyUsedFiles.openConfig",
+				"title": "Open Config",
+				"icon": {
+					"light": "resources/light/edit.svg",
+					"dark": "resources/dark/edit.svg"
+				}
+			},
+			{
 				"command": "frequentlyUsedFiles.openGroup",
 				"title": "Opens all files in a group",
 				"icon": {
@@ -86,6 +94,10 @@
 			"view/title": [
 				{
 					"command": "frequentlyUsedFiles.refresh",
+					"group": "navigation"
+				},
+				{
+					"command": "frequentlyUsedFiles.openConfig",
 					"group": "navigation"
 				}
 			],

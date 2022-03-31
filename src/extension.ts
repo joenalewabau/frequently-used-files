@@ -13,6 +13,14 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.showInformationMessage(`Refreshed frequentlyUsedFiles`);
   });
 
+  vscode.commands.registerCommand('frequentlyUsedFiles.openConfig', async () => {
+    const folders = vscode.workspace.workspaceFolders;
+    if (folders) {
+      const uri = vscode.Uri.joinPath(folders[0].uri, DEFAULT_CONFIG_FILE_NAME);
+
+      await vscode.commands.executeCommand('vscode.open', uri);
+    }
+  });
   vscode.commands.registerCommand(
     'frequentlyUsedFiles.openGroup',
     async (groupPressed: GroupOrFile) => {
