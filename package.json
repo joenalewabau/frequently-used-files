@@ -1,143 +1,156 @@
 {
-	"name": "frequently-used-files",
-	"displayName": "frequently-used-files",
-	"description": "",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.63.0"
-	},
-	"repository": {
-		"url": "https://github.com/jnalewabau/frequently-used-files.git"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onView:frequentlyUsedFiles"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "frequentlyUsedFiles.refresh",
-				"title": "Refresh",
-				"icon": {
-					"light": "resources/light/refresh.svg",
-					"dark": "resources/dark/refresh.svg"
-				}
-			},
-			{
-				"command": "frequentlyUsedFiles.openConfig",
-				"title": "Open Config",
-				"icon": {
-					"light": "resources/light/edit.svg",
-					"dark": "resources/dark/edit.svg"
-				}
-			},
-			{
-				"command": "frequentlyUsedFiles.openGroup",
-				"title": "Opens all files in a group",
-				"icon": {
-					"light": "resources/light/edit.svg",
-					"dark": "resources/dark/edit.svg"
-				}
-			},
-			{
-				"command": "frequentlyUsedFiles.openFile",
-				"title": "Open a file",
-				"icon": {
-					"light": "resources/light/edit.svg",
-					"dark": "resources/dark/edit.svg"
-				}
-			},
-			{
-				"command": "frequentlyUsedFiles.openFileViaClick",
-				"title": "Open a file",
-				"icon": {
-					"light": "resources/light/edit.svg",
-					"dark": "resources/dark/edit.svg"
-				}
-			}
-		],
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "frequentlyUsedFiles",
-					"title": "Frequent Files",
-					"icon": "media/dep.svg"
-				}
-			]
-		},
-		"views": {
-			"frequentlyUsedFiles": [
-				{
-					"id": "frequentlyUsedFiles",
-					"name": "File groups",
-					"icon": "media/dep.svg",
-					"contextualTitle": "Frequent Files PE"
-				}
-			]
-		},
-		"viewsWelcome": [
-			{
-				"view": "frequentlyUsedFiles",
-				"when": "frequentlyUsedFiles.configFormatError == false",
-				"contents": "Frequent files requires a configuration file (`fufconfig.json`) to exist at the root level of the project.\n[Create sample config file](command:frequentlyUsedFiles.createDefaultConfig)"
-			},
-			{
-				"view": "frequentlyUsedFiles",
-				"when": "frequentlyUsedFiles.configFormatError == true",
-				"contents": "Frequent files configuration file (`fufconfig.json`) has a format issue. Please fix and refresh\n[Refresh](command:frequentlyUsedFiles.refresh)"
-			}
-		],
-		"menus": {
-			"view/title": [
-				{
-					"command": "frequentlyUsedFiles.refresh",
-					"group": "navigation"
-				},
-				{
-					"command": "frequentlyUsedFiles.openConfig",
-					"group": "navigation"
-				}
-			],
-			"view/item/context": [
-				{
-					"command": "frequentlyUsedFiles.openGroup",
-					"when": "view == frequentlyUsedFiles && viewItem == group",
-					"group": "inline"
-				},
-				{
-					"command": "frequentlyUsedFiles.openFile",
-					"when": "view == frequentlyUsedFiles && viewItem == file",
-					"group": "inline"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.4",
-		"@types/mocha": "^9.0.0",
-		"@types/node": "14.x",
-		"@types/vscode": "^1.63.0",
-		"@typescript-eslint/eslint-plugin": "^5.1.0",
-		"@typescript-eslint/parser": "^5.1.0",
-		"@vscode/test-electron": "^1.6.2",
-		"eslint": "^8.1.0",
-		"glob": "^7.1.7",
-		"mocha": "^9.1.3",
-		"typescript": "^4.4.4"
-	},
-	"dependencies": {
-		"joi": "^17.6.0",
-		"neverthrow": "^4.3.1"
-	}
+  "name": "frequently-used-files",
+  "displayName": "frequently-used-files",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.63.0"
+  },
+  "repository": {
+    "url": "https://github.com/jnalewabau/frequently-used-files.git"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "frequentlyUsedFiles.refresh",
+        "title": "Manual Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "frequentlyUsedFiles.openConfig",
+        "title": "Open Config",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "frequentlyUsedFiles.collapseAll",
+        "title": "Collapse",
+        "icon": "$(collapse-all)"
+      },
+      {
+        "command": "frequentlyUsedFiles.openFileOrGroup",
+        "title": "Opens file(s)",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "frequentlyUsedFiles.removeFileOrGroup",
+        "title": "Remove from frequent files",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "frequentlyUsedFiles.openFileViaClickInTreeWindow",
+        "title": "Open file",
+        "icon": "$(error)"
+      },
+      {
+        "command": "frequentlyUsedFiles.addFileToFrequentFiles",
+        "title": "Add a frequently used file",
+        "icon": "$(add)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "frequentlyUsedFiles",
+          "title": "Frequent Files",
+          "icon": "media/dep.svg"
+        }
+      ]
+    },
+    "views": {
+      "frequentlyUsedFiles": [
+        {
+          "id": "frequentlyUsedFiles",
+          "name": "File groups",
+          "icon": "media/dep.svg",
+          "contextualTitle": "Frequent Files PE"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "frequentlyUsedFiles",
+        "when": "frequentlyUsedFiles.configFormatError == false",
+        "contents": "Frequent files requires a configuration file (`fufconfig.json`) to exist at the root level of the project.\n[Create sample config file](command:frequentlyUsedFiles.createDefaultConfig)"
+      },
+      {
+        "view": "frequentlyUsedFiles",
+        "when": "frequentlyUsedFiles.configFormatError == true",
+        "contents": "Frequent files configuration file (`fufconfig.json`) has a format issue. Please fix and refresh\n[Refresh](command:frequentlyUsedFiles.refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "frequentlyUsedFiles.refresh",
+          "group": "navigation"
+        },
+        {
+          "command": "frequentlyUsedFiles.openConfig",
+          "group": "navigation"
+        },
+        {
+          "command": "frequentlyUsedFiles.collapseAll",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "frequentlyUsedFiles.openFileOrGroup",
+          "when": "view == frequentlyUsedFiles && viewItem == group",
+          "group": "inline"
+        },
+        {
+          "command": "frequentlyUsedFiles.removeFileOrGroup",
+          "when": "view == frequentlyUsedFiles && viewItem == group",
+          "group": "inline"
+        },
+        {
+          "command": "frequentlyUsedFiles.openFileOrGroup",
+          "when": "view == frequentlyUsedFiles && viewItem == file",
+          "group": "inline"
+        },
+        {
+          "command": "frequentlyUsedFiles.removeFileOrGroup",
+          "when": "view == frequentlyUsedFiles && viewItem == file",
+          "group": "inline"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "frequentlyUsedFiles.addFileToFrequentFiles",
+          "group": "navigation",
+          "when": "resourceScheme == 'file'"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.63.0",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "@vscode/test-electron": "^1.6.2",
+    "eslint": "^8.1.0",
+    "glob": "^7.1.7",
+    "mocha": "^9.1.3",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "joi": "^17.6.0",
+    "neverthrow": "^4.3.1"
+  }
 }

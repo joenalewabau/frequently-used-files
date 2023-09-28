@@ -1,82 +1,60 @@
 import * as vscode from 'vscode';
-import { DEFAULT_CONFIG_FILE_CONTENTS, DEFAULT_CONFIG_FILE_NAME } from './constants';
-import { GroupOrFile, FrequentlyUsedFilesProvider } from './frequentlyUsedFilesProvider';
+import { DEFAULT_CONFIG_FILE_NAME } from './constants';
+import { FrequentlyUsedFilesProvider } from './tree/frequentlyUsedFilesProvider';
+import { addFileToFrequentlyUsedGroup } from './commands/addFileToFrequentlyUsedGroup';
+import { createDefaultConfig } from './commands/createDefaultConfig';
+import { openFileViaClickInTreeWindow } from './commands/openFileViaClickInTreeWindow';
+import { openFileOrGroup } from './commands/openFileOrGroup';
+import { collapseAllGroups } from './commands/collapseAllGroups';
+import { openConfig } from './commands/openConfig';
+import { refresh } from './commands/refresh';
+import { GroupOrFileTreeItem } from './tree/groupOrFileTreeItem';
+import { removeFromFrequentlyUsed } from './commands/removeFromFrequentlyUsed';
 
 export function activate(context: vscode.ExtensionContext) {
   // Register the core tree provider
   const frequentlyUsedFilesProvider = new FrequentlyUsedFilesProvider(DEFAULT_CONFIG_FILE_NAME);
   vscode.window.registerTreeDataProvider('frequentlyUsedFiles', frequentlyUsedFilesProvider);
 
-  // Register all the commands
-  vscode.commands.registerCommand('frequentlyUsedFiles.refresh', () => {
-    frequentlyUsedFilesProvider.refresh();
-    vscode.window.showInformationMessage(`Refreshed frequentlyUsedFiles`);
-  });
-
-  vscode.commands.registerCommand('frequentlyUsedFiles.openConfig', async () => {
-    const folders = vscode.workspace.workspaceFolders;
-    if (folders) {
-      const uri = vscode.Uri.joinPath(folders[0].uri, DEFAULT_CONFIG_FILE_NAME);
-
-      await vscode.commands.executeCommand('vscode.open', uri);
-    }
-  });
-  vscode.commands.registerCommand(
-    'frequentlyUsedFiles.openGroup',
-    async (groupPressed: GroupOrFile) => {
-      const folders = vscode.workspace.workspaceFolders;
-      if (folders) {
-        // Open up all the files in this group
-        for (const file of groupPressed.files) {
-          const uri = vscode.Uri.joinPath(folders[0].uri, file.label);
-          const doc = await vscode.workspace.openTextDocument(uri);
-          vscode.window.showTextDocument(doc);
-        }
-      }
-    },
+  //* Top level commands for the tree view
+  vscode.commands.registerCommand('frequentlyUsedFiles.refresh', () =>
+    refresh(frequentlyUsedFilesProvider),
   );
 
-  vscode.commands.registerCommand(
-    'frequentlyUsedFiles.openFile',
-    async (filePressed: GroupOrFile) => {
-      const folders = vscode.workspace.workspaceFolders;
-      if (folders) {
-        const uri = vscode.Uri.joinPath(folders[0].uri, filePressed.label);
-
-        await vscode.commands.executeCommand('vscode.open', uri);
-      }
-    },
+  vscode.commands.registerCommand('frequentlyUsedFiles.openConfig', async () =>
+    openConfig(frequentlyUsedFilesProvider),
   );
 
-  vscode.commands.registerCommand('frequentlyUsedFiles.openFileViaClick', async (filePath) => {
-    const folders = vscode.workspace.workspaceFolders;
-    if (folders) {
-      const uri = vscode.Uri.joinPath(folders[0].uri, filePath);
+  vscode.commands.registerCommand('frequentlyUsedFiles.collapseAll', async () =>
+    collapseAllGroups(frequentlyUsedFilesProvider),
+  );
 
-      await vscode.commands.executeCommand('vscode.open', uri);
-    }
-  });
+  vscode.commands.registerCommand('frequentlyUsedFiles.createDefaultConfig', async () =>
+    createDefaultConfig(frequentlyUsedFilesProvider),
+  );
 
-  /**
-   * Create a default config file
-   */
-  vscode.commands.registerCommand('frequentlyUsedFiles.createDefaultConfig', async () => {
-    const folders = vscode.workspace.workspaceFolders;
-    if (folders) {
-      const uri = vscode.Uri.joinPath(folders[0].uri, DEFAULT_CONFIG_FILE_NAME);
+  //* Commands for a frequently used group or file
+  vscode.commands.registerCommand(
+    'frequentlyUsedFiles.openFileOrGroup',
+    async (fileOrGroupPressed: GroupOrFileTreeItem) => openFileOrGroup(fileOrGroupPressed),
+  );
+  vscode.commands.registerCommand(
+    'frequentlyUsedFiles.removeFileOrGroup',
+    async (fileOrGroupPressed: GroupOrFileTreeItem) =>
+      removeFromFrequentlyUsed(fileOrGroupPressed, frequentlyUsedFilesProvider),
+  );
 
-      const edit = new vscode.WorkspaceEdit();
+  //* Commands for a frequently used file
+  vscode.commands.registerCommand(
+    'frequentlyUsedFiles.openFileViaClickInTreeWindow',
+    async (fileClicked: GroupOrFileTreeItem) => openFileViaClickInTreeWindow(fileClicked),
+  );
 
-      edit.createFile(uri, { ignoreIfExists: true });
-
-      const position = new vscode.Position(0, 0);
-      edit.insert(uri, position, DEFAULT_CONFIG_FILE_CONTENTS);
-
-      await vscode.workspace.applyEdit(edit);
-
-      frequentlyUsedFilesProvider.refresh();
-    }
-  });
+  //* Other Commands
+  // Command to add a specific file to a group. This will kick off the quick pick process for a group
+  vscode.commands.registerCommand(
+    'frequentlyUsedFiles.addFileToFrequentFiles',
+    async (resourceUri: vscode.Uri) =>
+      addFileToFrequentlyUsedGroup(resourceUri, frequentlyUsedFilesProvider),
+  );
 }
-
-export function deactivate() {}
