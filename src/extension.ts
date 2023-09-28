@@ -8,9 +8,14 @@ import { openFileOrGroup } from './commands/openFileOrGroup';
 import { collapseAllGroups } from './commands/collapseAllGroups';
 import { openConfig } from './commands/openConfig';
 import { refresh } from './commands/refresh';
-import { FrequentTreeItemBase } from './tree/groupOrFileTreeItem';
+import {
+  FrequentFileTreeItem,
+  FrequentGroupTreeItem,
+  FrequentTreeItemBase,
+} from './tree/groupOrFileTreeItem';
 import { removeFromFrequentlyUsed } from './commands/removeFromFrequentlyUsed';
 import { addGroup } from './commands/addGroup';
+import { renameGroup } from './commands/renameGroup';
 
 export function activate(context: vscode.ExtensionContext) {
   // Register the core tree provider
@@ -27,11 +32,17 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   vscode.commands.registerCommand('frequentlyUsedFiles.collapseAll', async () =>
-    collapseAllGroups(frequentlyUsedFilesProvider),
+    collapseAllGroups(),
   );
 
   vscode.commands.registerCommand('frequentlyUsedFiles.addGroup', async () =>
     addGroup(frequentlyUsedFilesProvider),
+  );
+
+  vscode.commands.registerCommand(
+    'frequentlyUsedFiles.renameGroup',
+    async (groupToRename: FrequentGroupTreeItem) =>
+      renameGroup(groupToRename, frequentlyUsedFilesProvider),
   );
 
   vscode.commands.registerCommand('frequentlyUsedFiles.createDefaultConfig', async () =>
@@ -40,19 +51,23 @@ export function activate(context: vscode.ExtensionContext) {
 
   //* Commands for a frequently used group or file
   vscode.commands.registerCommand(
+    'frequentlyUsedFiles.openGroup',
+    async (groupToOpen: FrequentTreeItemBase) => openFileOrGroup(groupToOpen),
+  );
+  vscode.commands.registerCommand(
     'frequentlyUsedFiles.openFileOrGroup',
-    async (fileOrGroupPressed: FrequentTreeItemBase) => openFileOrGroup(fileOrGroupPressed),
+    async (fileToOpen: FrequentTreeItemBase) => openFileOrGroup(fileToOpen),
   );
   vscode.commands.registerCommand(
     'frequentlyUsedFiles.removeFileOrGroup',
-    async (fileOrGroupPressed: FrequentTreeItemBase) =>
-      removeFromFrequentlyUsed(fileOrGroupPressed, frequentlyUsedFilesProvider),
+    async (itemToRemove: FrequentTreeItemBase) =>
+      removeFromFrequentlyUsed(itemToRemove, frequentlyUsedFilesProvider),
   );
 
   //* Commands for a frequently used file
   vscode.commands.registerCommand(
     'frequentlyUsedFiles.openFileViaClickInTreeWindow',
-    async (fileClicked: FrequentTreeItemBase) => openFileViaClickInTreeWindow(fileClicked),
+    async (fileToOpen: FrequentFileTreeItem) => openFileViaClickInTreeWindow(fileToOpen),
   );
 
   //* Other Commands

@@ -50,7 +50,7 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
     this.fufFile = loadFilesFromConfig.value;
     const topLevelTreeGroups = this.fufFile.groups.map((group) => {
       const nestedTreeFiles = group.files.map((fileName) => {
-        return new FrequentFileTreeItem(fileName);
+        return new FrequentFileTreeItem(fileName, group.name);
       });
 
       return new FrequentGroupTreeItem(group.name, nestedTreeFiles);
@@ -59,7 +59,10 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
     return topLevelTreeGroups;
   }
 
-  // Add a file to a  group and refresh the view
+  /**
+   * Add a group
+   * @param groupName
+   */
   async addGroup(groupName: string) {
     if (this.fufFile) {
       await this.fufFile.addGroup(groupName);
@@ -67,6 +70,19 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
 
     this.refresh();
   }
+
+  /**
+   * Rename a group
+   * @param groupName
+   */
+  async renameGroup(existingGroupName: string, newGroupName: string) {
+    if (this.fufFile) {
+      await this.fufFile.renameGroup(existingGroupName, newGroupName);
+    }
+
+    this.refresh();
+  }
+
   // Add a file to a  group and refresh the view
   async addFileToGroup(groupName: string, filePath: string) {
     if (this.fufFile) {
@@ -77,9 +93,9 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
   }
 
   // Add a file to a  group and refresh the view
-  async removeFile(filePath: string) {
+  async removeFile(filePath: string, group: string) {
     if (this.fufFile) {
-      await this.fufFile.removeFile(filePath);
+      await this.fufFile.removeFile(filePath, group);
     }
     this.refresh();
   }

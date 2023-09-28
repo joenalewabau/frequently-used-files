@@ -17,27 +17,37 @@
     "commands": [
       {
         "command": "frequentlyUsedFiles.refresh",
-        "title": "Manual Refresh",
+        "title": "Manual refresh",
         "icon": "$(refresh)"
       },
       {
         "command": "frequentlyUsedFiles.openConfig",
-        "title": "Open Config",
+        "title": "Open config",
         "icon": "$(edit)"
       },
       {
         "command": "frequentlyUsedFiles.addGroup",
-        "title": "Add Frequently Used File Group",
+        "title": "Add group",
         "icon": "$(add)"
       },
       {
+        "command": "frequentlyUsedFiles.renameGroup",
+        "title": "Rename group",
+        "icon": "$(edit)"
+      },
+      {
         "command": "frequentlyUsedFiles.collapseAll",
-        "title": "Collapse",
+        "title": "Collapse all",
         "icon": "$(collapse-all)"
       },
       {
+        "command": "frequentlyUsedFiles.openGroup",
+        "title": "Open all files in group",
+        "icon": "$(files)"
+      },
+      {
         "command": "frequentlyUsedFiles.openFileOrGroup",
-        "title": "Opens file(s)",
+        "title": "Open file",
         "icon": "$(edit)"
       },
       {
@@ -108,7 +118,7 @@
       ],
       "view/item/context": [
         {
-          "command": "frequentlyUsedFiles.openFileOrGroup",
+          "command": "frequentlyUsedFiles.openGroup",
           "when": "view == frequentlyUsedFiles && viewItem == group",
           "group": "inline"
         },
@@ -125,6 +135,11 @@
         {
           "command": "frequentlyUsedFiles.removeFileOrGroup",
           "when": "view == frequentlyUsedFiles && viewItem == file",
+          "group": "inline"
+        },
+        {
+          "command": "frequentlyUsedFiles.renameGroup",
+          "when": "view == frequentlyUsedFiles && viewItem == group",
           "group": "inline"
         }
       ],

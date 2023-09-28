@@ -1,6 +1,9 @@
-import * as vscode from 'vscode';
 import { FrequentlyUsedFilesProvider } from '../tree/frequentlyUsedFilesProvider';
-import { FrequentTreeItemBase } from '../tree/groupOrFileTreeItem';
+import {
+  FrequentFileTreeItem,
+  FrequentGroupTreeItem,
+  FrequentTreeItemBase,
+} from '../tree/groupOrFileTreeItem';
 /**
  * Add a file to the template
  */
@@ -9,14 +12,14 @@ export async function removeFromFrequentlyUsed(
   frequentlyUsedFilesProvider: FrequentlyUsedFilesProvider,
 ) {
   // If this a specific file , then remove it from any group it is in
-  if (itemToRemove.contextValue === 'file') {
+  if (itemToRemove instanceof FrequentFileTreeItem) {
     const relativePath = itemToRemove.label;
 
     // Find this label in a group
-    frequentlyUsedFilesProvider.removeFile(relativePath);
+    frequentlyUsedFilesProvider.removeFile(relativePath, itemToRemove.group);
   }
   // If this is a group, then remove all files from this group
-  else if (itemToRemove.contextValue === 'group') {
+  else if (itemToRemove instanceof FrequentGroupTreeItem) {
     const groupName = itemToRemove.label;
 
     frequentlyUsedFilesProvider.removeGroup(groupName);

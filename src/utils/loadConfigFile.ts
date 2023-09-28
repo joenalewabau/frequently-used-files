@@ -3,6 +3,11 @@ import { err, ok, Result } from 'neverthrow';
 import * as vscode from 'vscode';
 import { FUFFile, LoadConfigFailure } from './fufFile';
 
+/**
+ * Load a config file from disk
+ * @param configFile
+ * @returns
+ */
 export async function loadConfigFile(
   configFile: string,
 ): Promise<Result<FUFFile, LoadConfigFailure>> {
@@ -14,7 +19,7 @@ export async function loadConfigFile(
 
       const uri = vscode.Uri.joinPath(folders[0].uri, configFile);
 
-      const result = await FUFFile.loadConfigFile(uri);
+      const result = await FUFFile.readConfigFileFromDisk(uri);
 
       if (result.isErr()) {
         const message = `FUF Config format issue: ${result.error.message}`;
