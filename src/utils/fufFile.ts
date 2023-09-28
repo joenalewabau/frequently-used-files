@@ -25,6 +25,14 @@ export class FUFFile {
   constructor(private uri: vscode.Uri, public groups: FUFGroup[]) {}
 
   // Add a file to an existing group or create a new group
+  async addGroup(groupName: string) {
+    const newGroup = new FUFGroup(groupName, []);
+    this.groups.push(newGroup);
+    // Save this change to disk
+    await this.writeToConfigFile(this.uri);
+  }
+
+  // Add a file to an existing group or create a new group
   async addFileToGroup(groupName: string, filePath: string) {
     const existingGroup = this.groups.find((group) => group.name === groupName);
 

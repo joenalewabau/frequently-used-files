@@ -8,8 +8,9 @@ import { openFileOrGroup } from './commands/openFileOrGroup';
 import { collapseAllGroups } from './commands/collapseAllGroups';
 import { openConfig } from './commands/openConfig';
 import { refresh } from './commands/refresh';
-import { GroupOrFileTreeItem } from './tree/groupOrFileTreeItem';
+import { FrequentTreeItemBase } from './tree/groupOrFileTreeItem';
 import { removeFromFrequentlyUsed } from './commands/removeFromFrequentlyUsed';
+import { addGroup } from './commands/addGroup';
 
 export function activate(context: vscode.ExtensionContext) {
   // Register the core tree provider
@@ -29,6 +30,10 @@ export function activate(context: vscode.ExtensionContext) {
     collapseAllGroups(frequentlyUsedFilesProvider),
   );
 
+  vscode.commands.registerCommand('frequentlyUsedFiles.addGroup', async () =>
+    addGroup(frequentlyUsedFilesProvider),
+  );
+
   vscode.commands.registerCommand('frequentlyUsedFiles.createDefaultConfig', async () =>
     createDefaultConfig(frequentlyUsedFilesProvider),
   );
@@ -36,18 +41,18 @@ export function activate(context: vscode.ExtensionContext) {
   //* Commands for a frequently used group or file
   vscode.commands.registerCommand(
     'frequentlyUsedFiles.openFileOrGroup',
-    async (fileOrGroupPressed: GroupOrFileTreeItem) => openFileOrGroup(fileOrGroupPressed),
+    async (fileOrGroupPressed: FrequentTreeItemBase) => openFileOrGroup(fileOrGroupPressed),
   );
   vscode.commands.registerCommand(
     'frequentlyUsedFiles.removeFileOrGroup',
-    async (fileOrGroupPressed: GroupOrFileTreeItem) =>
+    async (fileOrGroupPressed: FrequentTreeItemBase) =>
       removeFromFrequentlyUsed(fileOrGroupPressed, frequentlyUsedFilesProvider),
   );
 
   //* Commands for a frequently used file
   vscode.commands.registerCommand(
     'frequentlyUsedFiles.openFileViaClickInTreeWindow',
-    async (fileClicked: GroupOrFileTreeItem) => openFileViaClickInTreeWindow(fileClicked),
+    async (fileClicked: FrequentTreeItemBase) => openFileViaClickInTreeWindow(fileClicked),
   );
 
   //* Other Commands

@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { GroupOrFileTreeItem } from '../tree/groupOrFileTreeItem';
+import { FrequentTreeItemBase } from '../tree/groupOrFileTreeItem';
 /**
  * Add a file to the template
  */
-export async function openFileViaClickInTreeWindow(fileClicked: GroupOrFileTreeItem) {
+export async function openFileViaClickInTreeWindow(fileClicked: FrequentTreeItemBase) {
   const folders = vscode.workspace.workspaceFolders;
   if (folders) {
     const uri = vscode.Uri.joinPath(folders[0].uri, fileClicked.label);

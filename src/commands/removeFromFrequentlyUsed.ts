@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { FrequentlyUsedFilesProvider } from '../tree/frequentlyUsedFilesProvider';
-import { GroupOrFileTreeItem } from '../tree/groupOrFileTreeItem';
+import { FrequentTreeItemBase } from '../tree/groupOrFileTreeItem';
 /**
  * Add a file to the template
  */
 export async function removeFromFrequentlyUsed(
-  itemToRemove: GroupOrFileTreeItem,
+  itemToRemove: FrequentTreeItemBase,
   frequentlyUsedFilesProvider: FrequentlyUsedFilesProvider,
 ) {
   // If this a specific file , then remove it from any group it is in

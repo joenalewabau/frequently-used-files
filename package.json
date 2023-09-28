@@ -26,6 +26,11 @@
         "icon": "$(edit)"
       },
       {
+        "command": "frequentlyUsedFiles.addGroup",
+        "title": "Add Frequently Used File Group",
+        "icon": "$(add)"
+      },
+      {
         "command": "frequentlyUsedFiles.collapseAll",
         "title": "Collapse",
         "icon": "$(collapse-all)"
@@ -94,6 +99,10 @@
         },
         {
           "command": "frequentlyUsedFiles.collapseAll",
+          "group": "navigation"
+        },
+        {
+          "command": "frequentlyUsedFiles.addGroup",
           "group": "navigation"
         }
       ],

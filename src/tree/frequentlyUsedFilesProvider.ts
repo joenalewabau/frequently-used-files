@@ -1,9 +1,13 @@
 import * as vscode from 'vscode';
 import { loadConfigFile } from '../utils/loadConfigFile';
 import { FUFFile } from '../utils/fufFile';
-import { GroupOrFileTreeItem } from './groupOrFileTreeItem';
+import {
+  FrequentFileTreeItem,
+  FrequentGroupTreeItem,
+  FrequentTreeItemBase,
+} from './groupOrFileTreeItem';
 
-export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<GroupOrFileTreeItem> {
+export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<FrequentTreeItemBase> {
   private fufFile: FUFFile | null;
 
   constructor(public readonly configFile: string) {
@@ -15,14 +19,17 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Grou
    * @param element The group or file
    * @returns
    */
-  getTreeItem(element: GroupOrFileTreeItem): vscode.TreeItem {
+  getTreeItem(element: FrequentTreeItemBase): vscode.TreeItem {
     return element;
   }
 
-  async getChildren(element?: GroupOrFileTreeItem): Promise<GroupOrFileTreeItem[]> {
+  async getChildren(element?: FrequentTreeItemBase): Promise<FrequentTreeItemBase[]> {
     // If we have an element that we return the files for that element
     if (element) {
-      return element.files;
+      // If this is a group then return the files in that group
+      if (element instanceof FrequentGroupTreeItem) {
+        return element.files;
+      }
     }
 
     // Attempt to load the config file
@@ -43,15 +50,23 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Grou
     this.fufFile = loadFilesFromConfig.value;
     const topLevelTreeGroups = this.fufFile.groups.map((group) => {
       const nestedTreeFiles = group.files.map((fileName) => {
-        return new GroupOrFileTreeItem(fileName, []);
+        return new FrequentFileTreeItem(fileName);
       });
 
-      return new GroupOrFileTreeItem(group.name, nestedTreeFiles);
+      return new FrequentGroupTreeItem(group.name, nestedTreeFiles);
     });
 
     return topLevelTreeGroups;
   }
 
+  // Add a file to a  group and refresh the view
+  async addGroup(groupName: string) {
+    if (this.fufFile) {
+      await this.fufFile.addGroup(groupName);
+    }
+
+    this.refresh();
+  }
   // Add a file to a  group and refresh the view
   async addFileToGroup(groupName: string, filePath: string) {
     if (this.fufFile) {
@@ -78,10 +93,10 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Grou
     this.refresh();
   }
   // Refresh implementation
-  private _onDidChangeTreeData: vscode.EventEmitter<GroupOrFileTreeItem | undefined> =
-    new vscode.EventEmitter<GroupOrFileTreeItem | undefined>();
+  private _onDidChangeTreeData: vscode.EventEmitter<FrequentTreeItemBase | undefined> =
+    new vscode.EventEmitter<FrequentTreeItemBase | undefined>();
 
-  readonly onDidChangeTreeData: vscode.Event<GroupOrFileTreeItem | undefined> =
+  readonly onDidChangeTreeData: vscode.Event<FrequentTreeItemBase | undefined> =
     this._onDidChangeTreeData.event;
 
   refresh(): void {

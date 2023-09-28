@@ -20,12 +20,12 @@ export async function addFileToFrequentlyUsedGroup(
     const frequentGroups = currentGroups.map((group) => {
       return {
         label: group.label,
-        description: 'Frequently Used File Group',
       };
     });
 
     const groupToAddTo = await vscode.window.showQuickPick(frequentGroups, {
-      placeHolder: 'Add selected file to which frequently used group?',
+      placeHolder: 'Add to which frequently used group?',
+      title: 'Add file to frequently used group',
     });
 
     if (groupToAddTo) {

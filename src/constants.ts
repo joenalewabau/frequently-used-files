@@ -9,7 +9,7 @@ export const DEFAULT_CONFIG_FILE_CONTENTS = `{
       ]
     },
     {
-      "name": "Group 2 (empty)",
+      "name": "Group 2",
       "files": []
     }
   ]
