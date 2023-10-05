@@ -1,8 +1,9 @@
 {
   "name": "frequently-used-files",
   "displayName": "frequently-used-files",
-  "description": "",
-  "version": "0.0.1",
+  "description": "Keeps bookmarks for frequently used files in a project ",
+  "version": "0.0.2",
+  "publisher": "nalewabau",
   "engines": {
     "vscode": "^1.75.0"
   },
