@@ -2,7 +2,7 @@
   "name": "frequently-used-files",
   "displayName": "frequently-used-files",
   "description": "Keeps bookmarks for frequently used files in a project ",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "nalewabau",
   "engines": {
     "vscode": "^1.75.0"
@@ -155,13 +155,13 @@
     }
   },
   "scripts": {
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "build": "npm run -S esbuild-base -- --sourcemap",
+    "watch": "npm run -S esbuild-base -- --sourcemap --watch",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./"
@@ -182,6 +182,7 @@
   },
   "dependencies": {
     "joi": "^17.6.0",
-    "neverthrow": "^4.3.1"
+    "neverthrow": "^4.3.1",
+    "rimraf": "^5.0.5"
   }
 }

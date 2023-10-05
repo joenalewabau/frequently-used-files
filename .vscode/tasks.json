@@ -6,15 +6,21 @@
 		{
 			"type": "npm",
 			"script": "watch",
-			"problemMatcher": "$tsc-watch",
+			"group": "build",
+			"problemMatcher": "$esbuild-watch",
 			"isBackground": true,
-			"presentation": {
-				"reveal": "never"
-			},
+			"label": "npm: watch"
+		},
+		{
+			"type": "npm",
+			"script": "build",
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			}
+			},
+			"problemMatcher": [],
+			"label": "npm: build",
+			"detail": "npm run -S esbuild-base -- --sourcemap"
 		}
 	]
 }
