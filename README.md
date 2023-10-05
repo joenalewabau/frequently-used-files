@@ -12,7 +12,7 @@ The extension stores groups and file information in a file called fufconfig.json
 
 Access the extension via the bookmark icon in the main Tree View container.
 
-![Frequently Used Files VS code UI](media/extension-tree-view.png)
+![Frequently Used Files VS code UI](/media/extension-tree-view.png?raw=true)
 
 From the extension window, you can maintain groups and:
 
