@@ -4,8 +4,6 @@ export const DEFAULT_CONFIG_FILE_CONTENTS = `{
     {
       "name": "Group 1",
       "files": [
-        "file1.ts",
-        "file2.txt"
       ]
     },
     {

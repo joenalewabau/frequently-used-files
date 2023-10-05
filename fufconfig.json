@@ -3,8 +3,8 @@
     {
       "name": "Main files",
       "files": [
-        "src\\extension.ts",
-        "package.json"
+        "package.json",
+        "src/extension.ts"
       ]
     }
   ]

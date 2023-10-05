@@ -4,7 +4,7 @@
   "description": "",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.63.0"
+    "vscode": "^1.75.0"
   },
   "repository": {
     "url": "https://github.com/jnalewabau/frequently-used-files.git"
@@ -13,6 +13,7 @@
     "Other"
   ],
   "main": "./out/extension.js",
+  "activationEvents": [],
   "contributes": {
     "commands": [
       {
@@ -48,7 +49,7 @@
       {
         "command": "frequentlyUsedFiles.openFileOrGroup",
         "title": "Open file",
-        "icon": "$(edit)"
+        "icon": "$(files)"
       },
       {
         "command": "frequentlyUsedFiles.removeFileOrGroup",
@@ -71,7 +72,7 @@
         {
           "id": "frequentlyUsedFiles",
           "title": "Frequent Files",
-          "icon": "media/dep.svg"
+          "icon": "$(bookmark)"
         }
       ]
     },
@@ -118,12 +119,17 @@
       ],
       "view/item/context": [
         {
-          "command": "frequentlyUsedFiles.openGroup",
+          "command": "frequentlyUsedFiles.removeFileOrGroup",
           "when": "view == frequentlyUsedFiles && viewItem == group",
           "group": "inline"
         },
         {
-          "command": "frequentlyUsedFiles.removeFileOrGroup",
+          "command": "frequentlyUsedFiles.renameGroup",
+          "when": "view == frequentlyUsedFiles && viewItem == group",
+          "group": "inline"
+        },
+        {
+          "command": "frequentlyUsedFiles.openGroup",
           "when": "view == frequentlyUsedFiles && viewItem == group",
           "group": "inline"
         },
@@ -135,11 +141,6 @@
         {
           "command": "frequentlyUsedFiles.removeFileOrGroup",
           "when": "view == frequentlyUsedFiles && viewItem == file",
-          "group": "inline"
-        },
-        {
-          "command": "frequentlyUsedFiles.renameGroup",
-          "when": "view == frequentlyUsedFiles && viewItem == group",
           "group": "inline"
         }
       ],
@@ -153,12 +154,16 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "test-compile": "tsc -p ./"
   },
   "devDependencies": {
     "@types/glob": "^7.1.4",
@@ -168,6 +173,7 @@
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "@vscode/test-electron": "^1.6.2",
+    "esbuild": "^0.19.4",
     "eslint": "^8.1.0",
     "glob": "^7.1.7",
     "mocha": "^9.1.3",
