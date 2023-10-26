@@ -1,26 +1,29 @@
 import * as vscode from 'vscode';
 import { Result, err, ok } from 'neverthrow';
-import * as Joi from 'joi';
+import { z } from 'zod';
+
 import { TextDecoder, TextEncoder } from 'util';
-
-const groupSchema = Joi.object({
-  name: Joi.string().required(),
-  files: Joi.array().items(Joi.string()).required(),
-});
-
-const groupSettingsSchema = Joi.object({
-  groups: Joi.array().items(groupSchema).required(),
-});
-
-class FUFGroup {
-  constructor(public name: string, public files: string[]) {}
-}
 
 export interface LoadConfigFailure {
   code: 'config-not-found' | 'config-format-error' | 'code-no-workspace';
   message: string;
 }
 
+// Use ZOD to define the validation and types for the FUF File
+const fileGroupSchema = z.object({
+  name: z.string(),
+  files: z.array(z.string()).default([]),
+});
+export type FUFGroup = z.infer<typeof fileGroupSchema>;
+
+const fufSchema = z.object({
+  groups: z.array(fileGroupSchema).default([]),
+});
+
+/**
+ * The FUFFile class represents the config file on disk. It is responsible for
+ * reading and writing the config file.
+ */
 export class FUFFile {
   constructor(private uri: vscode.Uri, public groups: FUFGroup[]) {}
 
@@ -29,7 +32,11 @@ export class FUFFile {
    * @param groupName
    */
   async addGroup(groupName: string) {
-    const newGroup = new FUFGroup(groupName, []);
+    const newGroup: FUFGroup = {
+      name: groupName,
+      files: [],
+    };
+
     this.groups.push(newGroup);
     // Save this change to disk
     await this.writeToConfigFile(this.uri);
@@ -62,7 +69,10 @@ export class FUFFile {
       existingGroup.files.push(filePath);
     } else {
       // Create a new group and add the file to it
-      const newGroup = new FUFGroup(groupName, [filePath]);
+      const newGroup: FUFGroup = {
+        name: groupName,
+        files: [filePath],
+      };
       this.groups.push(newGroup);
     }
 
@@ -108,14 +118,16 @@ export class FUFFile {
   static async readConfigFileFromDisk(
     uri: vscode.Uri,
   ): Promise<Result<FUFFile, LoadConfigFailure>> {
+    // Load the config from the config file on disk
     const fileContents = await vscode.workspace.fs.readFile(uri);
     const text = new TextDecoder().decode(fileContents);
     const json = JSON.parse(text);
 
-    const { value, error } = groupSettingsSchema.validate(json);
+    // Validate the config file
+    const result = fufSchema.safeParse(json);
 
-    if (error) {
-      const message = `FUF Config format issue: ${error.message}`;
+    if (!result.success) {
+      const message = `FUF Config format issue: ${result.error.message}`;
       vscode.window.showErrorMessage(message);
       vscode.commands.executeCommand('setContext', 'frequentlyUsedFiles.configFormatError', true);
 
@@ -126,11 +138,9 @@ export class FUFFile {
     }
 
     // Construct the FUFFile object from the data
-    const groups = value.groups.map((group: any) => {
-      return new FUFGroup(group.name, group.files);
-    });
+    const data = result.data;
 
-    return ok(new FUFFile(uri, groups));
+    return ok(new FUFFile(uri, data.groups));
   }
 
   /**
