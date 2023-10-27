@@ -12,6 +12,18 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
 
   constructor(public readonly configFile: string) {
     this.fufFile = null;
+
+    // Watch the config file for changes
+    const folders = vscode.workspace.workspaceFolders;
+
+    if (folders) {
+      const uri = vscode.Uri.joinPath(folders[0].uri, configFile);
+      let fileWatcher = vscode.workspace.createFileSystemWatcher(uri.fsPath);
+      fileWatcher.onDidChange(() => {
+        this.getChildren();
+        this.refresh();
+      });
+    }
   }
 
   /**
@@ -67,8 +79,6 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
     if (this.fufFile) {
       await this.fufFile.addGroup(groupName);
     }
-
-    this.refresh();
   }
 
   /**
@@ -79,8 +89,6 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
     if (this.fufFile) {
       await this.fufFile.renameGroup(existingGroupName, newGroupName);
     }
-
-    this.refresh();
   }
 
   // Add a file to a  group and refresh the view
@@ -88,8 +96,6 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
     if (this.fufFile) {
       await this.fufFile.addFileToGroup(groupName, filePath);
     }
-
-    this.refresh();
   }
 
   // Add a file to a  group and refresh the view
@@ -97,7 +103,6 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
     if (this.fufFile) {
       await this.fufFile.removeFile(filePath, group);
     }
-    this.refresh();
   }
 
   // Add a file to a  group and refresh the view
@@ -105,8 +110,6 @@ export class FrequentlyUsedFilesProvider implements vscode.TreeDataProvider<Freq
     if (this.fufFile) {
       await this.fufFile.removeGroup(groupName);
     }
-
-    this.refresh();
   }
   // Refresh implementation
   private _onDidChangeTreeData: vscode.EventEmitter<FrequentTreeItemBase | undefined> =
